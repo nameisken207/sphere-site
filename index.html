@@ -57,16 +57,22 @@ window.addEventListener("message", (event) => {
 });
 
 function createSphere(items) {
-  const radius = 5;
+  const radius = 5.3; // tighter spacing
   const loader = new THREE.TextureLoader();
 
-  items.forEach((item, i) => {
-    const phi = Math.acos(-1 + (2 * i) / items.length);
-    const theta = Math.sqrt(items.length * Math.PI) * phi;
+  const rows = 6;
+  const cols = 10;
 
-    const x = radius * Math.cos(theta) * Math.sin(phi);
-    const y = radius * Math.sin(theta) * Math.sin(phi);
-    const z = radius * Math.cos(phi);
+  items.forEach((item, i) => {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+
+    const phi = (row / (rows - 1)) * Math.PI;
+    const theta = (col / cols) * Math.PI * 2;
+
+    const x = radius * Math.sin(phi) * Math.cos(theta);
+    const y = radius * Math.cos(phi);
+    const z = radius * Math.sin(phi) * Math.sin(theta);
 
     const texture = loader.load(item);
 
@@ -78,7 +84,7 @@ function createSphere(items) {
     });
     const bg = new THREE.Mesh(bgGeo, bgMat);
 
-    // --- IMAGE (on top) ---
+    // --- IMAGE ---
     const imgGeo = new THREE.PlaneGeometry(1.1, 1.1);
     const imgMat = new THREE.MeshBasicMaterial({
       map: texture,
@@ -87,7 +93,6 @@ function createSphere(items) {
     });
     const img = new THREE.Mesh(imgGeo, imgMat);
 
-    // stack image on card
     img.position.z = 0.01;
     bg.add(img);
 
@@ -152,4 +157,3 @@ window.addEventListener("resize", () => {
 
 </body>
 </html>
-
